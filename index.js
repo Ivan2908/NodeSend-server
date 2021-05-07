@@ -16,6 +16,7 @@ const port = process.env.PORT || 4000;
 //Routes of the app
 app.use('/api/user', require('./routes/user'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/link', require('./routes/link'));
 
 
 //Run the app
