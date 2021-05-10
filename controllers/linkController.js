@@ -45,3 +45,33 @@ exports.newLink = async (req, res,next) => {
         console.log(error);
     }
 };
+
+//Obtain the link id
+exports.obtainLink = async (req, res, next) => {
+    const { url,name } = req.params;
+    // Verife if exist the link
+    const idLink = await Link.findOne({ url });
+    if(!idLink) {
+        res.status(404).json({msg: 'That link does not exist'});
+        return next();
+    }
+
+    // If the link exists
+    res.json({file: idLink.name});
+
+    const { numDownload } = idLink;
+
+    // If the downloads are equal then 1 - Delete the entry and delete the file
+    if(numDownload === 1) {
+        // Delete the file 
+        req.file = name;
+
+        // Delete the entry from DB
+        await idLink.findOneAndRemove(req.params.url);
+        next();
+    } else {
+        // If the downloads are > then 1 - subtract 1
+        idLink.numDownload--;
+        await idLink.save();
+    }
+}
